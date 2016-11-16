@@ -5,13 +5,13 @@ import java.sql.*;
 
 public class projectMain{
 	static Scanner sc = new Scanner(System.in);
-	static Connection conn;
-
+	// static Connection conn;
+	// static Statement stmt;
 	public static void main(String[] args) {
 		int choice = 0;
 		
 		//if connect db successful
-		if(conn()){
+		if(sqlOperation.conn()){
 			System.out.println("Welcome to sales system!");
 			do{
 				printMainMenu();
@@ -23,8 +23,11 @@ public class projectMain{
 					Admin admin = new Admin();
 					admin.printAdminMenu();
 					int op = admin.getUserChoice();
-
-
+					if(op == 1)
+						{
+							sqlOperation.dropTable();
+							sqlOperation.createTable();
+						}
 				}
 				else if (choice == 2) //salesperson
 				{
@@ -52,17 +55,5 @@ public class projectMain{
 		int choice = sc.nextInt();
 		return choice;
 	}
-	public static boolean conn(){
-		try { 
-			Class.forName("com.mysql.jdbc.Driver");
-		    conn = DriverManager.getConnection( "jdbc:mysql://projgw.cse.cuhk.edu.hk:2712/db22?autoReconnect=true&useSSL=false", "db22", "1122574b"); 
-			System.err.println("Connection Success");
-		} 
-		catch(Exception x) { 
-			System.err.println("Unable to load the driver class!"); 
-			System.out.println("Exception: " + x.getMessage());
-            return false;
-		}
-		return true;
-	}
+
 }
