@@ -1,1 +1,1 @@
-javac -classpath mysql-jdbc.jar $1 && java "${1%.*}"
+javac -classpath ./mysql-jdbc.jar:./ SalesSystem.java && java -classpath ./mysql-jdbc.jar:./ SalesSystem
