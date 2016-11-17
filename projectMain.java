@@ -25,9 +25,14 @@ public class projectMain{
 					int op = admin.getUserChoice();
 					if(op == 1)
 						{
-							sqlOperation.dropTable();
 							sqlOperation.createTable();
+							choice = 0;
 						}
+					else if (op == 2)
+					{
+						sqlOperation.dropTable();
+						choice = 0;
+					}
 				}
 				else if (choice == 2) //salesperson
 				{
@@ -37,6 +42,7 @@ public class projectMain{
 				{
 
 				}
+
 			}while(choice!=4);
 		}
 	}
