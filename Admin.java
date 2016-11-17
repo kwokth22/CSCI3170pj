@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.io.*;
+import java.text.ParseException;
 
 public class Admin{
 	public static void printAdminMenu(){
@@ -10,11 +12,38 @@ public class Admin{
 		System.out.println("4. Show number of records in each table");
 		System.out.println("5. Return to the main menu");
 	}
-	public static int getUserChoice(){
-		System.out.print("Enter Your Choice: ");
+	// public static int getUserChoice(){
+	// 	System.out.print("Enter Your Choice: ");
+	// 	Scanner sc = new Scanner(System.in);
+	// 	int choice = sc.nextInt();
+	// 	return choice;
+	// }
+	public static void loadData(){
 		Scanner sc = new Scanner(System.in);
-		int choice = sc.nextInt();
-		return choice;
+		System.out.print("\nType in the Source Data Folder Path: ");
+		String path = sc.nextLine();
+		loadCategory("/"+path);
+		// loadManufacturer(path);
+		// loadPart(path);
+		// loadSalesperson(path);
+		// loadTransaction(path);	
 	}
+	public static void loadCategory(String path){
 
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(path + "/category.txt"));
+			String strLine;
+			while((strLine=br.readLine()) != null)
+			{
+				if(!strLine.equals("")){
+					String[] tokens = strLine.split("\t");
+					sqlOperation.insertCategory(tokens[1],tokens[2]);
+				}
+
+			}
+		}catch (IOException e){
+			System.err.println("IOException: " + e.getMessage());
+		}
+
+	}
 }

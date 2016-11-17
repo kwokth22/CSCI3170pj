@@ -8,8 +8,7 @@ public class sqlOperation{
 			Class.forName("com.mysql.jdbc.Driver");
 		    conn = DriverManager.getConnection( "jdbc:mysql://projgw.cse.cuhk.edu.hk:2712/db22?autoReconnect=true&useSSL=false", "db22", "1122574b"); 
 			System.err.println("Connection Success");
-		} 
-		catch(Exception x) { 
+		} catch(Exception x) { 
 			System.err.println("Unable to load the driver class!"); 
 			System.err.println("Exception: " + x.getMessage());
             return false;
@@ -35,7 +34,7 @@ public class sqlOperation{
 		try{
 			//Drop table if exist
 			dropTable();
-			
+
 			stmt = conn.createStatement();
 
 
@@ -84,5 +83,20 @@ public class sqlOperation{
 		}catch (SQLException x) {
             System.out.println("SQL Exception: " + x.getMessage());
         }
+	}
+
+	public static void insertCategory(String s1, String s2){
+		try{
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO category VALUES(?,?)");
+			pstmt.setInt(1,Integer.parseInt(s1.trim()));
+			pstmt.setString(2,s2.trim());
+
+			pstmt.executeUpdate();
+			pstmt.close();
+
+		}catch (SQLException x){
+			System.err.println("SQL Exception: " + x.getMessage());
+		}
+
 	}
 }	

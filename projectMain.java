@@ -12,6 +12,7 @@ public class projectMain{
 		
 		//if connect db successful
 		if(sqlOperation.conn()){
+
 			System.out.println("Welcome to sales system!");
 			do{
 				printMainMenu();
@@ -21,29 +22,41 @@ public class projectMain{
 				if(choice == 1)//admin
 				{
 					Admin admin = new Admin();
-					admin.printAdminMenu();
-					int op = admin.getUserChoice();
-					if(op == 1)
+					int op = 0;
+					while(op != 5){
+						admin.printAdminMenu();
+						op = getUserChoice();
+						switch (op)
 						{
-							sqlOperation.createTable();
-							choice = 0;
+							case 1: //Create table
+								sqlOperation.createTable();
+								break;
+							case 2: //drop table
+								sqlOperation.dropTable();
+								System.out.println("Processing...Done! Database is removed!");
+								break;
+							case 3: //Load from Datafile
+								admin.loadData();
+								break;
+							case 4: //show number of records in each table
+								break;
+							case 5:
+								break;
+							default:
+								break;
 						}
-					else if (op == 2)
-					{
-						sqlOperation.dropTable();
-						choice = 0;
 					}
+
 				}
 				else if (choice == 2) //salesperson
 				{
-
+					System.out.println("sales");
 				}
 				else if (choice == 3 ) //manager
 				{
-
+					System.out.println("sales");
 				}
-
-			}while(choice!=4);
+			}while(choice!=4); //exit
 		}
 	}
 	public static void printMainMenu(){
