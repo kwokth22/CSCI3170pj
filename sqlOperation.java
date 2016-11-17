@@ -1,8 +1,14 @@
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 
 public class sqlOperation{
 	static Connection conn;
 	static Statement stmt;
+
+	static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+	static java.util.Date date;
+
 	public static boolean conn(){
 		try { 
 			Class.forName("com.mysql.jdbc.Driver");
@@ -99,4 +105,74 @@ public class sqlOperation{
 		}
 
 	}
+	public static void insertManufacturer(String s1, String s2, String s3, String s4){
+		try{
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO manufacturer VALUES(?,?,?,?)");
+			pstmt.setInt(1,Integer.parseInt(s1.trim()));
+			pstmt.setString(2,s2.trim());
+			pstmt.setString(3,s3.trim());
+			pstmt.setInt(4,Integer.parseInt(s4.trim()));
+
+			pstmt.executeUpdate();
+			pstmt.close();
+
+		}catch (SQLException x){
+			System.err.println("SQL Exception: " + x.getMessage());
+		}
+
+	}
+	public static void insertPart(String s1, String s2, String s3, String s4,String s5,String s6,String s7){
+		try{
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO part VALUES(?,?,?,?,?,?,?)");
+			pstmt.setInt(1,Integer.parseInt(s1.trim()));
+			pstmt.setString(2,s2.trim());
+			pstmt.setInt(3,Integer.parseInt(s3.trim()));
+			pstmt.setInt(4,Integer.parseInt(s4.trim()));
+			pstmt.setInt(5,Integer.parseInt(s5.trim()));
+			pstmt.setInt(6,Integer.parseInt(s6.trim()));
+			pstmt.setInt(7,Integer.parseInt(s7.trim()));
+
+			pstmt.executeUpdate();
+			pstmt.close();
+
+		}catch (SQLException x){
+			System.err.println("SQL Exception: " + x.getMessage());
+		}
+	}
+	public static void insertSalesperson(String s1, String s2, String s3, String s4,String s5){
+		try{
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO part VALUES(?,?,?,?,?)");
+			pstmt.setInt(1,Integer.parseInt(s1.trim()));
+			pstmt.setString(2,s2.trim());
+			pstmt.setString(3,s3.trim());
+			pstmt.setInt(4,Integer.parseInt(s4.trim()));
+			pstmt.setInt(5,Integer.parseInt(s5.trim()));
+
+			pstmt.executeUpdate();
+			pstmt.close();
+
+		}catch (SQLException x){
+			System.err.println("SQL Exception: " + x.getMessage());
+		}
+	}
+	public static void insertTransaction(String s1, String s2, String s3, String s4){
+		try{
+			PreparedStatement pstmt = conn.prepareStatement("INSERT INTO part VALUES(?,?,?,?)");
+			pstmt.setInt(1,Integer.parseInt(s1.trim()));
+			pstmt.setString(2,s2.trim());
+			pstmt.setString(3,s3.trim());
+
+			date = formatter.parse(s4.trim());
+			java.sql.Date tdate = new java.sql.Date(date.getTime());
+
+			pstmt.setDate(4,tdate);
+
+			pstmt.executeUpdate();
+			pstmt.close();
+
+		}catch (Exception x){
+			System.err.println("SQL Exception: " + x.getMessage());
+		}
+	}
+
 }	

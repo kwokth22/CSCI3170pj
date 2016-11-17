@@ -22,7 +22,10 @@ public class Admin{
 		Scanner sc = new Scanner(System.in);
 		System.out.print("\nType in the Source Data Folder Path: ");
 		String path = sc.nextLine();
-		loadCategory("/"+path);
+		//get current dir
+		System.out.println("Work DIR"+System.getProperty("user.dir"));
+		String temp2 = System.getProperty("user.dir")+"/"+path;
+		loadCategory(temp2);
 		// loadManufacturer(path);
 		// loadPart(path);
 		// loadSalesperson(path);
@@ -45,5 +48,70 @@ public class Admin{
 			System.err.println("IOException: " + e.getMessage());
 		}
 
+	}
+	public static void loadManufacturer(String path){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(path + "/manufacturer.txt"));
+			String strLine;
+			while((strLine=br.readLine()) != null)
+			{
+				if(!strLine.equals("")){
+					String[] tokens = strLine.split("\t");
+					sqlOperation.insertManufacturer(tokens[1],tokens[2],tokens[3],tokens[4]);
+				}
+
+			}
+		}catch (IOException e){
+			System.err.println("IOException: " + e.getMessage());
+		}
+	}
+	public static void loadPart(String path){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(path + "/part.txt"));
+			String strLine;
+			while((strLine=br.readLine()) != null)
+			{
+				if(!strLine.equals("")){
+					String[] tokens = strLine.split("\t");
+					sqlOperation.insertPart(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7]);
+				}
+
+			}
+		}catch (IOException e){
+			System.err.println("IOException: " + e.getMessage());
+		}
+	}
+	public static void loadSalesperson(String path){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(path + "/salesperson.txt"));
+			String strLine;
+			while((strLine=br.readLine()) != null)
+			{
+				if(!strLine.equals("")){
+					String[] tokens = strLine.split("\t");
+					sqlOperation.insertSalesperson(tokens[1],tokens[2],tokens[3],tokens[4],tokens[5]);
+				}
+
+			}
+		}catch (IOException e){
+			System.err.println("IOException: " + e.getMessage());
+		}
+	}
+
+	public static void loadTransaction(String path){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(path + "/transation.txt"));
+			String strLine;
+			while((strLine=br.readLine()) != null)
+			{
+				if(!strLine.equals("")){
+					String[] tokens = strLine.split("\t");
+					sqlOperation.insertTransaction(tokens[1],tokens[2],tokens[3],tokens[4]);
+				}
+
+			}
+		}catch (IOException e){
+			System.err.println("IOException: " + e.getMessage());
+		}
 	}
 }
