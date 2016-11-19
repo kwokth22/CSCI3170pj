@@ -213,8 +213,10 @@ public class SqlOp {
     public static void sortAndlistTotalSalesDesc() {
         try {
             stmt = conn.createStatement();
+            String query = "DROP VIEW IF EXISTS temp";
+            stmt.execute(query);
             //Create View for number of sold part
-            String query = "CREATE OR REPLACE VIEW temp as SELECT pID, count(*) as number from transaction group by pID";
+            query = "CREATE OR REPLACE VIEW temp as SELECT pID, count(*) as number from transaction group by pID";
             stmt.execute(query);
 
 //            System.out.println("Successful create view");
@@ -229,7 +231,7 @@ public class SqlOp {
             query = "SELECT m.mID, m.mName, SUM(pPrice*temp.number) as Total from manufacturer m, part p, " +
                     "temp where temp.pID = p.pID and m.mID = p.mID group by m.mID order by Total DESC";
             ResultSet rs = stmt.executeQuery(query);
-
+            //Testing
             System.out.println("total ready");
 
             String mID, mName, Total;
@@ -256,8 +258,11 @@ public class SqlOp {
     public static void countTransBasedOnYrs(int lower, int upper) {
         try {
             stmt = conn.createStatement();
+            //Drop view if exists
+            String query = "DROP VIEW IF EXISTS temp2";
+            stmt.execute(query);
             //Create View for counting the number of trans for each sales
-            String query = "CREATE OR REPLACE VIEW temp2 as SELECT sID, count(*) as number from transaction group by sID";
+            query = "CREATE OR REPLACE VIEW temp2 as SELECT sID, count(*) as number from transaction group by sID";
             stmt.execute(query);
             System.out.println("Create view temp2 success");
 
