@@ -1,42 +1,73 @@
+import javax.xml.transform.Result;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
+import java.sql.*;
 
 public class Admin{
-	public static void printMenu(){
-		System.out.println("-----Operations for administrator menu-----");
-		System.out.println("What kinds of operation would you like to perform?");
-		System.out.println("1. Create all tables");
-		System.out.println("2. Delete all tables");
-		System.out.println("3. Load from datafile");
-		System.out.println("4. Show number of records in each table");
-		System.out.println("5. Return to the main menu");
-	}
 
-	public static int prompt(){
-		System.out.print("Enter Your Choice: ");
-		Scanner sc = new Scanner(System.in);
+    public static String[] menuArr = {
+            "-----Operations for administrator menu-----",
+            "What kinds of operation would you like to perform?",
+            "1. Create all tables",
+            "2. Delete all tables",
+            "3. Load from datafile",
+            "4. Show number of records in each table",
+            "5. Return to the main menu"
+    };
 
-		return sc.nextInt();
+    Admin(){
+        Functions.printMenu(menuArr);
 
-	}
+        SalesSystem.choice = Functions.prompt();
+        switch (SalesSystem.choice){
+            case 1: createTables(); break;
+            case 2: dropTables(); break;
+            case 3: loadDatafile(); break;
+            case 4: showRecNum(); break;
+            default: break;
+        }
 
-	public static void createTable(String tableName, String query){
+    }
 
 
-	}
+    //Read data from given text files
+    public static boolean readData(){
+        //Read data files
+        for(int i=0; i<SqlOp.loadDatafileArr.length; ++i){
+            Functions.loadDatafiles(SqlOp.loadDatafileArr[i]);
+        }
 
-	public static void deleteTable(String tableName){
+        return true;
+    }
 
-	}
+    public static void createTables(){
+        SqlOp.createTable();
+        readData();
 
-	public static void loadDataset(){
 
-	}
+        //For debugging
+        SqlOp.printAllSchema();
+        SqlOp.printAllTable();
+    }
 
-	public static int showRecNum(){
+    public static void dropTables(){
+        SqlOp.dropTables();
+    }
 
-		return 0;
+    public static void loadDatafile(){
 
-	}
+    }
+
+    public static int showRecNum(){
+
+        return 0;
+
+    }
+
+
 
 
 }
