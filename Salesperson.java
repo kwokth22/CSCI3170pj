@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Salesperson {
 
@@ -16,14 +18,23 @@ public class Salesperson {
     };
 
     Salesperson(){
-        Functions.printMenu(menuArr);
 
-        SalesSystem.choice = Functions.prompt();
-        switch (SalesSystem.choice){
-            case 1: searchPart(); break;
-            case 2: sellPart(); break;
-            case 3: return;
-            default: break;
+        while(SalesSystem.choice != 3) {
+            Functions.printMenu(menuArr);
+
+            SalesSystem.choice = Functions.prompt();
+            switch (SalesSystem.choice) {
+                case 1:
+                    searchPart();
+                    break;
+                case 2:
+                    sellPart();
+                    break;
+                case 3:
+                    return;
+                default:
+                    break;
+            }
         }
     }
 
@@ -41,11 +52,11 @@ public class Salesperson {
 
         System.out.print("Choose ordering:\n1. By price, ascending order\n2. By price, descending order\nChoose the Search criterion: ");
         int orderingInput = SalesSystem.sc.nextInt();
-        boolean ordering;
+        String ordering = "ASC";
         if(orderingInput==1){
-            ordering = true;
+            ordering = "ASC";
         } else if(orderingInput==2){
-            ordering = false;
+            ordering = "DESC";
         } else {
             return;
         }
@@ -56,19 +67,23 @@ public class Salesperson {
         if(criterion==1){
             try {
                 SqlOp.stmt = SqlOp.conn.createStatement();
-                String query = "SELECT * FROM part natural join manufacturer natural join category where pName=\"" + keyword + "\"";
+                String query = "SELECT * FROM part natural join manufacturer natural join category where pName=\"" + keyword + "\" ORDER BY pPrice " + ordering ;
+
                 rs = SqlOp.stmt.executeQuery(query);
+
             } catch (SQLException x){
-                System.out.println("SQL Exception: " + x.getMessage());
+                System.out.println("SQL Exception (searchPart criterion 1): " + x.getMessage());
             }
 
         } else if(criterion==2){
             try {
                 SqlOp.stmt = SqlOp.conn.createStatement();
-                String query = "SELECT * FROM part natural join manufacturer natural join category where mName=\"" + keyword + "\"";
+                String query = "SELECT * FROM part natural join manufacturer natural join category where mName=\"" + keyword + "\" ORDER BY pPrice " + ordering;
+
                 rs = SqlOp.stmt.executeQuery(query);
+
             } catch (SQLException x){
-                System.out.println("SQL Exception: " + x.getMessage());
+                System.out.println("SQL Exception (searchPart criterion 2): " + x.getMessage());
             }
 
         }
@@ -82,7 +97,7 @@ public class Salesperson {
             SqlOp.stmt.close();
 
         } catch (SQLException x){
-            System.out.println("SQL Exception: " + x.getMessage());
+            System.out.println("SQL Exception (searchPart print table): " + x.getMessage());
         }
 
 
@@ -99,8 +114,58 @@ public class Salesperson {
 
         //Add new transaction record
         //Is the transaction ID auto-increment? Sorted?
-        if(SqlOp.isPartAvailable(partID)){
-            SqlOp.insert("transaction", new String[] {"", Integer.toString(partID), Integer.toString(salespersonId), ""});
+
+
+        if(!SqlOp.isPartAvailable(partID)) {
+
+            System.out.println("The part remaining quantity is 0 and cannot be sold");
+
+        } else{
+
+            int currtID = -1;
+
+            try {
+                //Get current largest tID
+
+                Map<String, String> tmpMap = new HashMap<String, String>();
+                ResultSet r = SqlOp.selectAnd("max(tID)", "transaction", tmpMap, false, null, false);
+
+                while (r.next()) {
+                    currtID = r.getInt(1);
+                }
+
+                ++currtID;
+
+            } catch (SQLException x){
+                System.out.println("SQL Exception (get curr tID): " + x.getMessage());
+            }
+
+
+            String currDate = "";
+            try {
+                SqlOp.stmt = SqlOp.conn.createStatement();
+                ResultSet r = SqlOp.stmt.executeQuery("SELECT NOW()");
+
+                while(r.next()){
+                    currDate = r.getDate(1).toString();
+                }
+
+            } catch (SQLException x){
+                System.out.println("SQL Exception (sellPart show product detail): " + x.getMessage());
+            }
+
+
+            System.out.println("currtID: " + currtID);
+            System.out.println("currDate: " + currDate);
+
+
+
+            try {
+                SqlOp.stmt.executeUpdate("INSERT INTO transaction VALUES (" + currtID + ", " + partID + ", " + Integer.toString(salespersonId) + ", \'" + currDate + "\')");
+                //SqlOp.insert("transaction", new String[] {Integer.toString(currtID), Integer.toString(partID), Integer.toString(salespersonId), });
+            } catch (SQLException x) {
+                System.out.println("SQL Exception (insert into transaction): " + x.getMessage());
+            }
 
             //Decrease part volume by one
             Map<String,String> condition = new HashMap<String, String>();
@@ -114,7 +179,7 @@ public class Salesperson {
                     System.out.println("Product: " + rs.getString("pName") + "(id: " + rs.getInt("pID") + ") Remaining Quantity: " + rs.getInt("pAvailableQuantity"));
                 }
             } catch (SQLException x) {
-                System.out.println("SQL Exception: " + x.getMessage());
+                System.out.println("SQL Exception (sellPart show product detail): " + x.getMessage());
             }
 
         }

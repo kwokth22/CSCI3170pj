@@ -19,15 +19,27 @@ public class Admin{
     };
 
     Admin(){
-        Functions.printMenu(menuArr);
 
-        SalesSystem.choice = Functions.prompt();
-        switch (SalesSystem.choice){
-            case 1: createTables(); break;
-            case 2: dropTables(); break;
-            case 3: loadDatafile(); break;
-            case 4: showRecNum(); break;
-            default: break;
+        while(SalesSystem.choice!=5) {
+            Functions.printMenu(menuArr);
+
+            SalesSystem.choice = Functions.prompt();
+            switch (SalesSystem.choice) {
+                case 1:
+                    createTables();
+                    break;
+                case 2:
+                    dropTables();
+                    break;
+                case 3:
+                    loadDatafile();
+                    break;
+                case 4:
+                    showRecNum();
+                    break;
+                default:
+                    break;
+            }
         }
 
     }
@@ -71,6 +83,16 @@ public class Admin{
     }
 
     public static int showRecNum(){
+        try {
+
+            System.out.println("Number of records in each table:");
+            for(int i=0; i<SqlOp.loadDatafileArr.length; ++i){
+                System.out.println("Table_" + SqlOp.loadDatafileArr[i] + ": " + SqlOp.countRec(SqlOp.loadDatafileArr[i]));
+            }
+
+        } catch (Exception e) {
+            System.err.println("SQL Exception: " + e.getMessage());
+        }
 
         return 0;
 

@@ -48,7 +48,13 @@ public class SqlOp {
             for(int i=0; i<values.length-1; ++i){
                 pStmtStr += ",?";
             }
-            pStmtStr = ")";
+            pStmtStr += ")";
+
+
+            //For debugging
+            System.out.println("insert(): " + pStmtStr);
+
+
 
             pstmt = conn.prepareStatement(pStmtStr);
             for(int i=0; i<values.length; ++i){
@@ -59,7 +65,7 @@ public class SqlOp {
             pstmt.close();
 
         } catch (SQLException x) {
-            System.err.println("SQL Exception: " + x.getMessage());
+            System.err.println("SQL Exception (insert error): " + x.getMessage());
         }
     }
 
@@ -174,10 +180,10 @@ public class SqlOp {
     public static ResultSet selectAnd(String selection, String tName, Map<String, String> conditions, boolean order, String orderCol, boolean asc){
         try {
             stmt = conn.createStatement();
-            String query="SELECT " + selection + " FROM \"" + tName + "\" WHERE ";
+            String query="SELECT " + selection + " FROM " + tName + " WHERE ";
 
             for(Map.Entry<String, String> entry: conditions.entrySet()){
-                query += "" + entry.getKey() + "=" + "\"" + entry.getValue() + "\"" + " AND ";
+                query += entry.getKey() + "=" + "\"" + entry.getValue() + "\"" + " AND ";
             }
 
             query = query.substring(0, query.length()-5);
@@ -191,15 +197,13 @@ public class SqlOp {
                 }
             }
 
-            System.out.println(query);
-
             ResultSet rs = stmt.executeQuery(query);
-            stmt.close();
+            //stmt.close();
 
             return rs;
 
         } catch (SQLException x) {
-            System.out.println("SQL Exception: " + x.getMessage());
+            System.out.println("SQL Exception (selectAnd): " + x.getMessage());
         }
 
         return null;
@@ -211,19 +215,19 @@ public class SqlOp {
             Map<String, String> conditionMap= new HashMap<String, String>();
             conditionMap.put("pID", Integer.toString(id));
 
-            ResultSet rs = selectAnd("COUNT(*)", "part", conditionMap, false, "", false);
+            ResultSet rs = selectAnd("pAvailableQuantity", "part", conditionMap, false, "", false);
 
             int n = 0;
 
             while(rs.next()){
-                n = rs.getInt("pID");
+                n = rs.getInt("pAvailableQuantity");
             }
 
             return n > 0;
 
 
         } catch (SQLException x) {
-            System.out.println("SQL Exception: " + x.getMessage());
+            System.out.println("SQL Exception (isPartAvailable): " + x.getMessage());
         }
 
         return false;
@@ -233,7 +237,7 @@ public class SqlOp {
     public static void updateAnd(String tName, String action, Map<String, String> conditions){
         try {
             stmt = conn.createStatement();
-            String query="UPDATE " + tName + " SET " + tName + " WHERE ";
+            String query="UPDATE " + tName + " SET " + action + " WHERE ";
 
             for(Map.Entry<String, String> entry: conditions.entrySet()){
                 query += "" + entry.getKey() + "=" + "\"" + entry.getValue() + "\"" + " AND ";
@@ -241,7 +245,6 @@ public class SqlOp {
 
             query = query.substring(0, query.length()-5);
 
-            System.out.println(query);
 
             stmt.executeUpdate(query);
 
@@ -249,7 +252,7 @@ public class SqlOp {
 
 
         } catch (SQLException x) {
-            System.out.println("SQL Exception: " + x.getMessage());
+            System.out.println("SQL Exception (updateAnd): " + x.getMessage());
         }
 
     }
