@@ -84,6 +84,7 @@ public class Admin {
 
     public static void showRecNum() {
         try {
+            System.out.println("Number of records in each tables");
             //Show Category
             int num = SqlOp.countRec("category");
             System.out.println("Table_category: " + num);

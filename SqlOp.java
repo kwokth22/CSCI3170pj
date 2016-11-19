@@ -13,7 +13,7 @@ public class SqlOp {
     public static String[] loadDatafileArr = {"category", "manufacturer", "part", "salesperson", "transaction"};
     public static Map<String, int[]> tableMap = new HashMap<String, int[]>();
 
-    public static void initTableMap(){
+    public static void initTableMap() {
         tableMap.put("category", new int[]{0, 1});
         tableMap.put("manufacturer", new int[]{0, 1, 1, 0});
         tableMap.put("part", new int[]{0, 1, 0, 0, 0, 0, 0});
@@ -33,26 +33,26 @@ public class SqlOp {
     public static Statement stmt;
     public static PreparedStatement pstmt;
 
-    public static Connection connect(String forName, String host, String username, String password){
-        try{
+    public static Connection connect(String forName, String host, String username, String password) {
+        try {
             Class.forName(forName);
             return DriverManager.getConnection(host, username, password);
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public static void insert(String tableName, String[] values){
+    public static void insert(String tableName, String[] values) {
         try {
             String pStmtStr = "INSERT INTO " + tableName + " VALUES(?";
-            for(int i=0; i<values.length-1; ++i){
+            for (int i = 0; i < values.length - 1; ++i) {
                 pStmtStr += ",?";
             }
             pStmtStr = ")";
 
             pstmt = conn.prepareStatement(pStmtStr);
-            for(int i=0; i<values.length; ++i){
-                set(tableMap.get(tableName)[i], i+1, values[i]);
+            for (int i = 0; i < values.length; ++i) {
+                set(tableMap.get(tableName)[i], i + 1, values[i]);
             }
 
             pstmt.executeUpdate();
@@ -63,23 +63,28 @@ public class SqlOp {
         }
     }
 
-    public static void set(int type, int index, String s){
+    public static void set(int type, int index, String s) {
         try {
             switch (type) {
-                case 0: pstmt.setInt(index, Integer.parseInt(s.trim())); break;
-                case 1: pstmt.setString(index, s.trim()); break;
+                case 0:
+                    pstmt.setInt(index, Integer.parseInt(s.trim()));
+                    break;
+                case 1:
+                    pstmt.setString(index, s.trim());
+                    break;
                 case 2:
                     java.sql.Date tdate = new java.sql.Date(new SimpleDateFormat("dd/MM/yyyy").parse(s.trim()).getTime());
                     pstmt.setDate(index, tdate);
                     break;
-                default: break;
+                default:
+                    break;
             }
-        } catch (Exception x){
+        } catch (Exception x) {
             System.err.println("SQL Exception: " + x.getMessage());
         }
     }
 
-    public static int countRec(String tName){
+    public static int countRec(String tName) {
         int n = 0;
 
         try {
@@ -100,7 +105,7 @@ public class SqlOp {
         try {
             stmt = conn.createStatement();
 
-            for(int i=0; i<datafileArr.length; ++i) {
+            for (int i = 0; i < datafileArr.length; ++i) {
                 stmt.executeUpdate("DROP TABLE IF EXISTS " + datafileArr[i]);
             }
 
@@ -171,22 +176,22 @@ public class SqlOp {
         }
     }
 
-    public static ResultSet selectAnd(String selection, String tName, Map<String, String> conditions, boolean order, String orderCol, boolean asc){
+    public static ResultSet selectAnd(String selection, String tName, Map<String, String> conditions, boolean order, String orderCol, boolean asc) {
         try {
             stmt = conn.createStatement();
-            String query="SELECT " + selection + " FROM \"" + tName + "\" WHERE ";
+            String query = "SELECT " + selection + " FROM \"" + tName + "\" WHERE ";
 
-            for(Map.Entry<String, String> entry: conditions.entrySet()){
+            for (Map.Entry<String, String> entry : conditions.entrySet()) {
                 query += "" + entry.getKey() + "=" + "\"" + entry.getValue() + "\"" + " AND ";
             }
 
-            query = query.substring(0, query.length()-5);
+            query = query.substring(0, query.length() - 5);
 
-            if(order){
+            if (order) {
                 query += " ORDER BY " + orderCol;
-                if(asc){
+                if (asc) {
                     query += " ASC";
-                } else{
+                } else {
                     query += " DESC";
                 }
             }
@@ -205,17 +210,96 @@ public class SqlOp {
         return null;
     }
 
-
-    public static boolean isPartAvailable(int id){
+    public static void sortAndlistTotalSalesDesc() {
         try {
-            Map<String, String> conditionMap= new HashMap<String, String>();
+            stmt = conn.createStatement();
+            //Create View for number of sold part
+            String query = "CREATE OR REPLACE VIEW temp as SELECT pID, count(*) as number from transaction group by pID";
+            stmt.execute(query);
+
+//            System.out.println("Successful create view");
+//            //For testing
+//            query = "SELECT m.mName, p.pName, pPrice*temp.number as Sub from manufacturer m, part p, " +
+//                    "temp where temp.pID = p.pID and m.mID = p.mID";
+//
+//            stmt.execute(query);
+//            System.out.println("Sub total ready");
+
+//          Calculation Total sales
+            query = "SELECT m.mID, m.mName, SUM(pPrice*temp.number) as Total from manufacturer m, part p, " +
+                    "temp where temp.pID = p.pID and m.mID = p.mID group by m.mID order by Total DESC";
+            ResultSet rs = stmt.executeQuery(query);
+
+            System.out.println("total ready");
+
+            String mID, mName, Total;
+            System.out.println("| Manufacturer ID | Manufacturer Name | Total Sales Value");
+
+            //print result
+            while (rs.next()) {
+                mID = rs.getString(1);
+                System.out.print("| " + mID + " ");
+                mName = rs.getString(2);
+                System.out.print("| " + mName + " ");
+                Total = rs.getString(3);
+                System.out.print("| " + Total + " |");
+                System.out.println("");
+            }
+            System.out.println("End of Query");
+            stmt.close();
+        } catch (SQLException x) {
+            System.err.println("SQL Exception: " + x.getMessage());
+        }
+
+    }
+
+    public static void countTransBasedOnYrs(int lower, int upper) {
+        try {
+            stmt = conn.createStatement();
+            //Create View for counting the number of trans for each sales
+            String query = "CREATE OR REPLACE VIEW temp2 as SELECT sID, count(*) as number from transaction group by sID";
+            stmt.execute(query);
+            System.out.println("Create view temp2 success");
+
+            query = "SELECT s.sID, s.sName, s.sExperience, temp2.number as numTrans from salesperson s, temp2 " +
+                    "where s.sid = temp2.sid and s.sExperience between " + lower + " AND " + upper+" ORDER BY s.sID DESC";
+            ResultSet rs = stmt.executeQuery(query);
+
+            //Print title
+            System.out.println("Transaction Record:");
+            System.out.println("| ID | Name | Years of Experience | Number of Transaction |");
+            String sID, sName, sExp, numOfTrans;
+            //print result
+            while (rs.next()) {
+                sID = rs.getString(1);
+                System.out.print("| " + sID + " ");
+                sName = rs.getString(2);
+                System.out.print("| " + sName + " ");
+                sExp = rs.getString(3);
+                System.out.print("| " + sExp + " ");
+                numOfTrans = rs.getString(4);
+                System.out.print("| " + numOfTrans + " | ");
+                System.out.println("");
+            }
+            System.out.println("End of Query");
+
+            stmt.close();
+        } catch (SQLException x) {
+            System.err.println("SQL exception: "+ x.getMessage());
+        }
+    }
+
+
+    public static boolean isPartAvailable(int id) {
+        try {
+            Map<String, String> conditionMap = new HashMap<String, String>();
             conditionMap.put("pID", Integer.toString(id));
 
             ResultSet rs = selectAnd("COUNT(*)", "part", conditionMap, false, "", false);
 
             int n = 0;
 
-            while(rs.next()){
+            while (rs.next()) {
                 n = rs.getInt("pID");
             }
 
@@ -230,16 +314,16 @@ public class SqlOp {
 
     }
 
-    public static void updateAnd(String tName, String action, Map<String, String> conditions){
+    public static void updateAnd(String tName, String action, Map<String, String> conditions) {
         try {
             stmt = conn.createStatement();
-            String query="UPDATE " + tName + " SET " + tName + " WHERE ";
+            String query = "UPDATE " + tName + " SET " + tName + " WHERE ";
 
-            for(Map.Entry<String, String> entry: conditions.entrySet()){
+            for (Map.Entry<String, String> entry : conditions.entrySet()) {
                 query += "" + entry.getKey() + "=" + "\"" + entry.getValue() + "\"" + " AND ";
             }
 
-            query = query.substring(0, query.length()-5);
+            query = query.substring(0, query.length() - 5);
 
             System.out.println(query);
 
@@ -255,18 +339,18 @@ public class SqlOp {
     }
 
 
-    public static void printAllTable(){
+    public static void printAllTable() {
         try {
             stmt = conn.createStatement();
 
-            for(int i=0; i<loadDatafileArr.length; ++i) {
+            for (int i = 0; i < loadDatafileArr.length; ++i) {
                 ResultSet r = stmt.executeQuery("SELECT * FROM " + loadDatafileArr[i]);
                 ResultSetMetaData rsmd = r.getMetaData();
                 int columnsNumber = rsmd.getColumnCount();
 
                 System.out.println("\n*** " + SqlOp.loadDatafileArr[i] + " ***\n");
-                while(r.next()){
-                    for(int j = 1; j < columnsNumber+1; ++j) {
+                while (r.next()) {
+                    for (int j = 1; j < columnsNumber + 1; ++j) {
                         System.out.print(r.getString(j) + " ");
                     }
                     System.out.println();
@@ -275,23 +359,23 @@ public class SqlOp {
             }
 
 
-        } catch (SQLException x){
+        } catch (SQLException x) {
             System.out.println("SQL Exception: " + x.getMessage());
         }
     }
 
-    public static void printAllSchema(){
+    public static void printAllSchema() {
         try {
             stmt = conn.createStatement();
 
-            for(int i=0; i<loadDatafileArr.length; ++i) {
+            for (int i = 0; i < loadDatafileArr.length; ++i) {
                 ResultSet r = stmt.executeQuery("DESC " + loadDatafileArr[i]);
                 ResultSetMetaData rsmd = r.getMetaData();
                 int columnsNumber = rsmd.getColumnCount();
 
                 System.out.println("\n*** " + SqlOp.loadDatafileArr[i] + " ***\n");
-                while(r.next()){
-                    for(int j = 1; j < columnsNumber+1; ++j) {
+                while (r.next()) {
+                    for (int j = 1; j < columnsNumber + 1; ++j) {
                         System.out.print(r.getString(j) + " ");
                     }
                     System.out.println();
@@ -300,7 +384,7 @@ public class SqlOp {
             }
 
 
-        } catch (SQLException x){
+        } catch (SQLException x) {
             System.out.println("SQL Exception: " + x.getMessage());
         }
     }
