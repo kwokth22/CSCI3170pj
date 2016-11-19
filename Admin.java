@@ -37,7 +37,7 @@ public class Admin{
     public static boolean readData(){
         //Read data files
         for(int i=0; i<SqlOp.loadDatafileArr.length; ++i){
-            Functions.loadDatafiles(SqlOp.datafileArr[i]);
+            Functions.loadDatafiles(SqlOp.loadDatafileArr[i]);
         }
 
         return true;
@@ -49,6 +49,7 @@ public class Admin{
 
 
         //For debugging
+        SqlOp.printAllSchema();
         SqlOp.printAllTable();
     }
 

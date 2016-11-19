@@ -280,6 +280,31 @@ public class SqlOp {
         }
     }
 
+    public static void printAllSchema(){
+        try {
+            stmt = conn.createStatement();
+
+            for(int i=0; i<loadDatafileArr.length; ++i) {
+                ResultSet r = stmt.executeQuery("DESC " + loadDatafileArr[i]);
+                ResultSetMetaData rsmd = r.getMetaData();
+                int columnsNumber = rsmd.getColumnCount();
+
+                System.out.println("\n*** " + SqlOp.loadDatafileArr[i] + " ***\n");
+                while(r.next()){
+                    for(int j = 1; j < columnsNumber+1; ++j) {
+                        System.out.print(r.getString(j) + " ");
+                    }
+                    System.out.println();
+                }
+                System.out.println();
+            }
+
+
+        } catch (SQLException x){
+            System.out.println("SQL Exception: " + x.getMessage());
+        }
+    }
+
 
 }
 
