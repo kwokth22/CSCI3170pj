@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class SqlOp {
 
-    public static String[] datafileArr = {"category", "manufacturer", "part", "salesperson", "transaction"};
+    public static String[] datafileArr = {"transaction", "part", "category", "manufacturer", "salesperson"};
     public static Map<String, int[]> tableMap = new HashMap<String, int[]>();
 
     public static void initTableMap(){
@@ -105,6 +105,8 @@ public class SqlOp {
 
             stmt.close();
 
+            System.out.println("Processing...Done! Database is removed!");
+
         } catch (SQLException x) {
             System.err.println("SQL Exception: " + x.getMessage());
         }
@@ -159,7 +161,7 @@ public class SqlOp {
                     "CONSTRAINT transaction_part_fk FOREIGN KEY (pID) REFERENCES part(pID), " +
                     "CONSTRAINT transaction_salesperson_fk FOREIGN KEY (sID) REFERENCES salesperson(sID) ON DELETE CASCADE)");
 
-            System.err.println("Processing...Done! Database is initialized! ");
+            System.out.println("Processing...Done! Database is initialized! ");
 
             stmt.close();
 
