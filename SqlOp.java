@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class SqlOp {
 
     public static String[] datafileArr = {"transaction", "part", "category", "manufacturer", "salesperson"};
+    public static String[] loadDatafileArr = {"category", "manufacturer", "part", "salesperson", "transaction"};
     public static Map<String, int[]> tableMap = new HashMap<String, int[]>();
 
     public static void initTableMap(){
@@ -176,7 +177,7 @@ public class SqlOp {
             String query="SELECT " + selection + " FROM \"" + tName + "\" WHERE ";
 
             for(Map.Entry<String, String> entry: conditions.entrySet()){
-                query += "\"" + entry.getKey() + "\"=" + "\"" + entry.getValue() + "\"" + " AND ";
+                query += "" + entry.getKey() + "=" + "\"" + entry.getValue() + "\"" + " AND ";
             }
 
             query = query.substring(0, query.length()-5);
@@ -235,7 +236,7 @@ public class SqlOp {
             String query="UPDATE " + tName + " SET " + tName + " WHERE ";
 
             for(Map.Entry<String, String> entry: conditions.entrySet()){
-                query += "\"" + entry.getKey() + "\"=" + "\"" + entry.getValue() + "\"" + " AND ";
+                query += "" + entry.getKey() + "=" + "\"" + entry.getValue() + "\"" + " AND ";
             }
 
             query = query.substring(0, query.length()-5);
@@ -254,6 +255,30 @@ public class SqlOp {
     }
 
 
+    public static void printAllTable(){
+        try {
+            stmt = conn.createStatement();
+
+            for(int i=0; i<loadDatafileArr.length; ++i) {
+                ResultSet r = stmt.executeQuery("SELECT * FROM " + loadDatafileArr[i]);
+                ResultSetMetaData rsmd = r.getMetaData();
+                int columnsNumber = rsmd.getColumnCount();
+
+                System.out.println("\n*** " + SqlOp.loadDatafileArr[i] + " ***\n");
+                while(r.next()){
+                    for(int j = 1; j < columnsNumber+1; ++j) {
+                        System.out.print(r.getString(j) + " ");
+                    }
+                    System.out.println();
+                }
+                System.out.println();
+            }
+
+
+        } catch (SQLException x){
+            System.out.println("SQL Exception: " + x.getMessage());
+        }
+    }
 
 
 }

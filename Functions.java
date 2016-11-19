@@ -30,19 +30,35 @@ public class Functions {
                 try {
                     if(filename == "transaction"){
                         String[] tmpArr = line.split("\t");
-                        //SqlOp.stmt.executeUpdate("INSERT INTO " + filename + " VALUES (\"" + line.replaceAll("\t", "\",\"") + "\")");
-                        for(int i=0; i<tmpArr.length; ++i){
-                            System.out.println(tmpArr[i]);
+                        SqlOp.stmt = SqlOp.conn.createStatement();
+                        String q = "INSERT INTO " + filename + " VALUES (";
+                        for(int i=0; i<tmpArr.length-1; ++i){
+                            q += tmpArr[i] + ",";
                         }
+
+                        q += "STR_TO_DATE('" + tmpArr[tmpArr.length-1] + "','%d/%m/%Y'))";
+                        //System.out.println(q);
+                        SqlOp.stmt.executeUpdate(q);
+                        SqlOp.stmt.close();
+
+                        //SqlOp.stmt.executeUpdate("INSERT INTO " + filename + " VALUES (\"" + line.replaceAll("\t", "\",\"") + "\")");
+                        /*for(int i=0; i<tmpArr.length; ++i){
+                            System.out.println(tmpArr[i]);
+                        }*/
                     } else {
+                        SqlOp.stmt = SqlOp.conn.createStatement();
+                        String q = "INSERT INTO " + filename + " VALUES (\"" + line.replaceAll("\t", "\",\"") + "\")";
                         SqlOp.stmt.executeUpdate("INSERT INTO " + filename + " VALUES (\"" + line.replaceAll("\t", "\",\"") + "\")");
+                        System.out.println(q);
+                        SqlOp.stmt.close();
                     }
+
                 } catch (SQLException x){
                     System.err.println("SQL Exception: " + x.getMessage());
                 }
-                //System.out.println("INSERT INTO " + filename + " VALUES (\"" + line.replaceAll("\t", "\",\"") + "\")");
 
             }
+
         } catch (Exception e){
             System.out.println("Not foundaa: " + filename);
         }

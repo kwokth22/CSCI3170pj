@@ -1,6 +1,10 @@
+import javax.xml.transform.Result;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
+import java.sql.*;
 
 public class Admin{
 
@@ -32,9 +36,8 @@ public class Admin{
     //Read data from given text files
     public static boolean readData(){
         //Read data files
-        for(int i=0; i<SqlOp.datafileArr.length; ++i){
+        for(int i=0; i<SqlOp.loadDatafileArr.length; ++i){
             Functions.loadDatafiles(SqlOp.datafileArr[i]);
-
         }
 
         return true;
@@ -43,6 +46,10 @@ public class Admin{
     public static void createTables(){
         SqlOp.createTable();
         readData();
+
+
+        //For debugging
+        SqlOp.printAllTable();
     }
 
     public static void dropTables(){
@@ -58,6 +65,8 @@ public class Admin{
         return 0;
 
     }
+
+
 
 
 }

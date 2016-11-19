@@ -3,6 +3,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Salesperson {
 
@@ -34,8 +35,9 @@ public class Salesperson {
             return;
         }
 
-        System.out.print("Type in the Search keyword:");
-        String keyword = SalesSystem.sc.nextLine();
+        System.out.print("Type in the Search keyword: ");
+        Scanner scanner = new Scanner(System.in);
+        String keyword = scanner.nextLine();
 
         System.out.print("Choose ordering:\n1. By price, ascending order\n2. By price, descending order\nChoose the Search criterion: ");
         int orderingInput = SalesSystem.sc.nextInt();
