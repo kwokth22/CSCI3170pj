@@ -19,9 +19,10 @@ public class Functions {
         return SalesSystem.sc.nextInt();
     }
 
-    public static void loadDatafiles(String filename){
+    public static void loadDatafiles(String folderPath, String filename){
         try{
-            BufferedReader br = new BufferedReader(new FileReader("sample_data/" + filename + ".txt"));
+            System.out.println(folderPath + "/" + filename + ".txt");
+            BufferedReader br = new BufferedReader(new FileReader(folderPath + "/" + filename + ".txt"));
             String line;
 
             //System.out.println("Reading " + "sample_data/" + filename + ".txt");

@@ -34,19 +34,22 @@ public class Admin{
 
 
     //Read data from given text files
-    public static boolean readData(){
+    public static boolean readData(String folderPath){
         //Read data files
         for(int i=0; i<SqlOp.loadDatafileArr.length; ++i){
-            Functions.loadDatafiles(SqlOp.loadDatafileArr[i]);
+            Functions.loadDatafiles(folderPath, SqlOp.loadDatafileArr[i]);
         }
+
+
+        //For debugging
+        SqlOp.printAllSchema();
+        SqlOp.printAllTable();
 
         return true;
     }
 
     public static void createTables(){
         SqlOp.createTable();
-        readData();
-
 
         //For debugging
         SqlOp.printAllSchema();
@@ -58,6 +61,12 @@ public class Admin{
     }
 
     public static void loadDatafile(){
+        System.out.println("Type in the Source Data Folder Path: ");
+        Scanner s = new Scanner(System.in);
+
+        String folderPath = s.nextLine();
+
+        readData(folderPath);
 
     }
 
