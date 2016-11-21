@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 import java.sql.*;
 
-public class Admin{
+public class Admin {
 
     public static String[] menuArr = {
             "-----Operations for administrator menu-----",
@@ -18,12 +18,12 @@ public class Admin{
             "5. Return to the main menu"
     };
 
-    Admin(){
+    Admin() {
+        while (SalesSystem.choice != 5) {
 
-        while(SalesSystem.choice!=5) {
             Functions.printMenu(menuArr);
-
             SalesSystem.choice = Functions.prompt();
+
             switch (SalesSystem.choice) {
                 case 1:
                     createTables();
@@ -46,9 +46,9 @@ public class Admin{
 
 
     //Read data from given text files
-    public static boolean readData(String folderPath){
+    public static boolean readData(String folderPath) {
         //Read data files
-        for(int i=0; i<SqlOp.loadDatafileArr.length; ++i){
+        for (int i = 0; i < SqlOp.loadDatafileArr.length; ++i) {
             Functions.loadDatafiles(folderPath, SqlOp.loadDatafileArr[i]);
         }
 
@@ -60,7 +60,7 @@ public class Admin{
         return true;
     }
 
-    public static void createTables(){
+    public static void createTables() {
         SqlOp.createTable();
 
         //For debugging
@@ -68,11 +68,11 @@ public class Admin{
         SqlOp.printAllTable();
     }
 
-    public static void dropTables(){
+    public static void dropTables() {
         SqlOp.dropTables();
     }
 
-    public static void loadDatafile(){
+    public static void loadDatafile() {
         System.out.println("Type in the Source Data Folder Path: ");
         Scanner s = new Scanner(System.in);
 
@@ -82,24 +82,29 @@ public class Admin{
 
     }
 
-    public static int showRecNum(){
+    public static void showRecNum() {
         try {
-
-            System.out.println("Number of records in each table:");
-            for(int i=0; i<SqlOp.loadDatafileArr.length; ++i){
-                System.out.println("Table_" + SqlOp.loadDatafileArr[i] + ": " + SqlOp.countRec(SqlOp.loadDatafileArr[i]));
-            }
-
+            System.out.println("Number of records in each tables");
+            //Show Category
+            int num = SqlOp.countRec("category");
+            System.out.println("Table_category: " + num);
+            //Show Manufacturer
+            num = SqlOp.countRec("manufacturer");
+            System.out.println("Table_manufacturer: " + num);
+            //Show Part
+            num = SqlOp.countRec("part");
+            System.out.println("Table_part: " + num);
+            //Show Salesperson
+            num = SqlOp.countRec("salesperson");
+            System.out.println("Table_salesperson: " + num);
+            //Show Transaction
+            num = SqlOp.countRec("transaction");
+            System.out.println("Table_transaction: " + num);
         } catch (Exception e) {
             System.err.println("SQL Exception: " + e.getMessage());
         }
 
-        return 0;
-
     }
 
 
-
-
 }
-

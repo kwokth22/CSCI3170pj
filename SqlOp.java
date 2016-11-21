@@ -21,12 +21,21 @@ public class SqlOp {
         tableMap.put("transaction", new int[]{0, 0, 0, 2});
     }
 
+    final static String DB_DRIVER = "com.mysql.jdbc.Driver";
+    final static String DB_URL = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2712/db11?autoReconnect=true&useSSL=false";
+    final static String DB_USER = "db11";
+    final static String DB_PW = "b84cfdf8";
+
+    final static String DEBUG_DB_DRIVER = "com.mysql.jdbc.Driver";
+    final static String DEBUG_DB_URL = "jdbc:mysql://localhost:3306/csci_3170_proj?autoReconnect=true&useSSL=false";
+    final static String DEBUG_BD_USER = "root";
+    final static String DEBUG_DB_PW = "wutszkin28";
 
     public static Connection conn = SqlOp.connect(
-            "com.mysql.jdbc.Driver",
-            "jdbc:mysql://projgw.cse.cuhk.edu.hk:2712/db11?autoReconnect=true&useSSL=false",
-            "db11",
-            "b84cfdf8"
+            DEBUG_DB_DRIVER,
+            DEBUG_DB_URL,
+            DEBUG_BD_USER,
+            DEBUG_DB_PW
     );
 
 
@@ -209,6 +218,89 @@ public class SqlOp {
         return null;
     }
 
+    public static void sortAndlistTotalSalesDesc() {
+          try {
+              stmt = conn.createStatement();
+              String query = "DROP VIEW IF EXISTS temp";
+              stmt.execute(query);
+              //Create View for number of sold part
+              query = "CREATE OR REPLACE VIEW temp as SELECT pID, count(*) as number from transaction group by pID";
+              stmt.execute(query);
+
+      //            System.out.println("Successful create view");
+      //            //For testing
+      //            query = "SELECT m.mName, p.pName, pPrice*temp.number as Sub from manufacturer m, part p, " +
+      //                    "temp where temp.pID = p.pID and m.mID = p.mID";
+      //
+      //            stmt.execute(query);
+      //            System.out.println("Sub total ready");
+
+      //          Calculation Total sales
+              query = "SELECT m.mID, m.mName, SUM(pPrice*temp.number) as Total from manufacturer m, part p, " +
+                      "temp where temp.pID = p.pID and m.mID = p.mID group by m.mID order by Total DESC";
+              ResultSet rs = stmt.executeQuery(query);
+              //Testing
+              System.out.println("total ready");
+
+              String mID, mName, Total;
+              System.out.println("| Manufacturer ID | Manufacturer Name | Total Sales Value");
+
+              //print result
+              while (rs.next()) {
+                  mID = rs.getString(1);
+                  System.out.print("| " + mID + " ");
+                  mName = rs.getString(2);
+                  System.out.print("| " + mName + " ");
+                  Total = rs.getString(3);
+                  System.out.print("| " + Total + " |");
+                  System.out.println("");
+              }
+              System.out.println("End of Query");
+              stmt.close();
+          } catch (SQLException x) {
+              System.err.println("SQL Exception: " + x.getMessage());
+          }
+
+      }
+
+    public static void countTransBasedOnYrs(int lower, int upper) {
+        try {
+            stmt = conn.createStatement();
+            //Drop view if exists
+            String query = "DROP VIEW IF EXISTS temp2";
+            stmt.execute(query);
+            //Create View for counting the number of trans for each sales
+            query = "CREATE OR REPLACE VIEW temp2 as SELECT sID, count(*) as number from transaction group by sID";
+            stmt.execute(query);
+            System.out.println("Create view temp2 success");
+
+            query = "SELECT s.sID, s.sName, s.sExperience, temp2.number as numTrans from salesperson s, temp2 " +
+                    "where s.sid = temp2.sid and s.sExperience between " + lower + " AND " + upper+" ORDER BY s.sID DESC";
+            ResultSet rs = stmt.executeQuery(query);
+
+            //Print title
+            System.out.println("Transaction Record:");
+            System.out.println("| ID | Name | Years of Experience | Number of Transaction |");
+            String sID, sName, sExp, numOfTrans;
+            //print result
+            while (rs.next()) {
+                sID = rs.getString(1);
+                System.out.print("| " + sID + " ");
+                sName = rs.getString(2);
+                System.out.print("| " + sName + " ");
+                sExp = rs.getString(3);
+                System.out.print("| " + sExp + " ");
+                numOfTrans = rs.getString(4);
+                System.out.print("| " + numOfTrans + " | ");
+                System.out.println("");
+            }
+            System.out.println("End of Query");
+
+            stmt.close();
+        } catch (SQLException x) {
+            System.err.println("SQL exception: "+ x.getMessage());
+        }
+    }
 
     public static boolean isPartAvailable(int id){
         try {
@@ -310,4 +402,3 @@ public class SqlOp {
 
 
 }
-
