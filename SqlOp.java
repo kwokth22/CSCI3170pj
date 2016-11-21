@@ -290,6 +290,10 @@ public class SqlOp {
                   System.out.println("");
               }
               System.out.println("End of Query");
+              //Finish working please drop our temp view
+              query = "DROP VIEW IF EXISTS temp";
+              stmt.execute(query);
+
               stmt.close();
           } catch (SQLException x) {
               System.err.println("SQL Exception: " + x.getMessage());
@@ -329,6 +333,9 @@ public class SqlOp {
                 System.out.println("");
             }
             System.out.println("End of Query");
+            //Finish working please drop our temp view
+            query = "DROP VIEW IF EXISTS temp2";
+            stmt.execute(query);
 
             stmt.close();
         } catch (SQLException x) {
