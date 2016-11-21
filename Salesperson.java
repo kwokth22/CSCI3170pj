@@ -67,7 +67,7 @@ public class Salesperson {
         if(criterion==1){
             try {
                 SqlOp.stmt = SqlOp.conn.createStatement();
-                String query = "SELECT * FROM part natural join manufacturer natural join category where pName=\"" + keyword + "\" ORDER BY pPrice " + ordering ;
+                String query = "SELECT * FROM part natural join manufacturer natural join category where pName LIKE \"%" + keyword + "%\" ORDER BY pPrice " + ordering ;
 
                 rs = SqlOp.stmt.executeQuery(query);
 
@@ -78,7 +78,7 @@ public class Salesperson {
         } else if(criterion==2){
             try {
                 SqlOp.stmt = SqlOp.conn.createStatement();
-                String query = "SELECT * FROM part natural join manufacturer natural join category where mName=\"" + keyword + "\" ORDER BY pPrice " + ordering;
+                String query = "SELECT * FROM part natural join manufacturer natural join category where mName LIKE \"%" + keyword + "%\" ORDER BY pPrice " + ordering;
 
                 rs = SqlOp.stmt.executeQuery(query);
 
