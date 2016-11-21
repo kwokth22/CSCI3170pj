@@ -94,6 +94,40 @@ public class SqlOp {
         }
     }
 
+    public static void findNMosePopularPart(int N){
+        try{
+            String sql =  "SELECT p.pID, p.pName, COUNT(*) As nTrans FROM part p, transaction t "+
+                          "WHERE t.pID = p.pID " +
+                          "GROUP BY p.pID " +
+                          "HAVING COUNT(*)>0 " +
+                          "ORDER BY nTrans DESC "+
+                          "LIMIT ? ";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, N);
+
+            ResultSet rs = pstmt.executeQuery();
+            String pID, pName, nTrans;
+            System.out.println("| Part ID | Part Name | No. of Transaction |");
+            while(rs.next()){
+                pID = rs.getString(1);
+                System.out.print("| " + pID + " ");
+                pName = rs.getString(2);
+                System.out.print("| " + pName + " ");
+                nTrans = rs.getString(3);
+                System.out.print("| " + nTrans + " | ");
+                System.out.println("");
+            }
+            System.out.println("End of Query");
+
+            rs.close();
+            pstmt.close();
+
+        }catch (SQLException x) {
+            System.err.println("SQL Exception in findNMosePopularPart(Manager)");
+            System.err.println("SQL Exception: " + x.getMessage());
+        }
+    }
+
     public static int countRec(String tName){
         int n = 0;
 

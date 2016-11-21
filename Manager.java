@@ -46,10 +46,12 @@ public class Manager {
 
     public static void showNMostPopPart(){
         System.out.print("Type in the number of parts: ");
-        SalesSystem.choice = SalesSystem.sc.nextInt();
-
-
-
+        int n = SalesSystem.sc.nextInt();
+        if(n>0){
+          SqlOp.findNMosePopularPart(n);
+        }else{
+          System.out.println("N should be larger than 0");
+        }
     }
 
 
