@@ -22,9 +22,16 @@ public class SqlOp {
     }
 
     final static String DB_DRIVER = "com.mysql.jdbc.Driver";
-    final static String DB_URL = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2712/db11?autoReconnect=true&useSSL=false";
-    final static String DB_USER = "db11";
-    final static String DB_PW = "b84cfdf8";
+    final static String DB_URL = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2712/db22?autoReconnect=true&useSSL=false";
+    final static String DB_USER = "db22";
+    final static String DB_PW = "1122574b";
+
+//  final static String DB_DRIVER = "com.mysql.jdbc.Driver";
+//  final static String DB_URL = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2712/db11?autoReconnect=true&useSSL=false";
+//  final static String DB_USER = "db11";
+//  final static String DB_PW = "b84cfdf8";
+
+
 
     final static String DEBUG_DB_DRIVER = "com.mysql.jdbc.Driver";
     final static String DEBUG_DB_URL = "jdbc:mysql://localhost:3306/csci_3170_proj?autoReconnect=true&useSSL=false";
@@ -32,10 +39,10 @@ public class SqlOp {
     final static String DEBUG_DB_PW = "wutszkin28";
 
     public static Connection conn = SqlOp.connect(
-            DEBUG_DB_DRIVER,
-            DEBUG_DB_URL,
-            DEBUG_BD_USER,
-            DEBUG_DB_PW
+            DB_DRIVER,
+            DB_URL,
+            DB_USER,
+            DB_PW
     );
 
 
@@ -174,19 +181,19 @@ public class SqlOp {
             //Create table category
             stmt.executeUpdate("CREATE TABLE category (" +
                     "cID INTEGER(2) PRIMARY KEY CHECK (mID >= 0), " +
-                    "cName VARCHAR(20) NOT NULL )");
+                    "cName VARCHAR(20) CHARACTER SET 'utf8' NOT NULL  )");
 
             //Create table manufacturer
             stmt.executeUpdate("CREATE TABLE manufacturer (" +
                     "mID INTEGER(2) PRIMARY KEY CHECK (mID >= 0), " +
-                    "mName VARCHAR(20) NOT NULL, " +
-                    "mAdress VARCHAR(50) NOT NULL, " +
+                    "mName VARCHAR(20) CHARACTER SET 'utf8' NOT NULL , " +
+                    "mAdress VARCHAR(50) CHARACTER SET 'utf8' NOT NULL , " +
                     "mPhoneNumber INTEGER(8) NOT NULL CHECK (mPhoneNumber >= 0) )");
 
             //Create table part
             stmt.executeUpdate("CREATE TABLE part (" +
                     "pID INTEGER(3) PRIMARY KEY CHECK (pID >= 0), " +
-                    "pName VARCHAR(20) NOT NULL, " +
+                    "pName VARCHAR(20) CHARACTER SET 'utf8' NOT NULL, " +
                     "pPrice INTEGER(5) NOT NULL CHECK (pPrice >= 0), " +
                     "mID INTEGER(2) CHECK (mID >= 0), " +
                     "cID INTEGER(2) CHECK (cID >= 0), " +
@@ -198,8 +205,8 @@ public class SqlOp {
             //Create table salesperson
             stmt.executeUpdate("CREATE TABLE salesperson (" +
                     "sID INTEGER(2) PRIMARY KEY CHECK (sID >= 0), " +
-                    "sName VARCHAR(20) NOT NULL, " +
-                    "sAddress VARCHAR(50) NOT NULL, " +
+                    "sName VARCHAR(20) CHARACTER SET 'utf8' NOT NULL  , " +
+                    "sAddress VARCHAR(50) CHARACTER SET 'utf8' NOT NULL, " +
                     "sPhoneNumber INTEGER(8) NOT NULL CHECK (sPhoneNumber >= 0), " +
                     "sExperience INTEGER(1) NOT NULL CHECK (sExperience >= 0) )");
 
