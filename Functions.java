@@ -5,11 +5,11 @@ import java.sql.SQLException;
 public class Functions {
 
     public static void printMenu(String[] menu){
-        String s = "";
+        String s = "\n";
         for(int i=0; i<menu.length; ++i){
             s += menu[i] + "\n";
         }
-        System.out.println(s);
+        System.out.print(s);
     }
 
 
@@ -21,7 +21,11 @@ public class Functions {
 
     public static void loadDatafiles(String folderPath, String filename){
         try{
+			/*
+			//For debugging
             System.out.println(folderPath + "/" + filename + ".txt");
+			*/
+
             BufferedReader br = new BufferedReader(new FileReader(folderPath + "/" + filename + ".txt"));
             String line;
 
@@ -50,7 +54,13 @@ public class Functions {
                         SqlOp.stmt = SqlOp.conn.createStatement();
                         String q = "INSERT INTO " + filename + " VALUES (\"" + line.replaceAll("\t", "\",\"") + "\")";
                         SqlOp.stmt.executeUpdate("INSERT INTO " + filename + " VALUES (\"" + line.replaceAll("\t", "\",\"") + "\")");
+
+						/*
+						//For debugging
                         System.out.println(q);
+						*/
+
+
                         SqlOp.stmt.close();
                     }
 
@@ -61,7 +71,7 @@ public class Functions {
             }
 
         } catch (Exception e){
-            System.out.println("Not foundaa: " + filename);
+            System.out.println("Not found: " + filename);
         }
     }
 }

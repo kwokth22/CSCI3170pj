@@ -21,11 +21,14 @@ public class SalesSystem {
             return;
         }
 
+		/*
         //For debugging
         System.out.println("Conn created");
+		*/
 
         SqlOp.initTableMap();
 
+		System.out.println("Welcome to sales system!");
 
         while(!isEnd){
             printMainMenu();
@@ -43,7 +46,7 @@ public class SalesSystem {
 
 
     public static void printMainMenu(){
-        System.out.println("-----Main menu-----");
+        System.out.println("\n-----Main menu-----");
         System.out.println("What kinds of operation would you like to perform?");
         System.out.println("1. Operation for administrator");
         System.out.println("2. Operation for salesperson");
