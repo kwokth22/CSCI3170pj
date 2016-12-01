@@ -19,7 +19,7 @@ public class Functions {
         return SalesSystem.sc.nextInt();
     }
 
-    public static void loadDatafiles(String folderPath, String filename){
+    public static boolean loadDatafiles(String folderPath, String filename){
         try{
 			/*
 			//For debugging
@@ -66,12 +66,15 @@ public class Functions {
 
                 } catch (SQLException x){
                     System.err.println("SQL Exception: " + x.getMessage());
+                    return false;
                 }
 
             }
+            return true;
 
         } catch (Exception e){
             System.out.println("Not found: " + filename);
+            return false;
         }
     }
 }

@@ -48,17 +48,24 @@ public class Admin {
 	//Read data from given text files
 	public static boolean readData(String folderPath) {
 		//Read data files
+		int loadData = 0;
+		boolean loadDataSuccess = false;
 		for (int i = 0; i < SqlOp.loadDatafileArr.length; ++i) {
-			Functions.loadDatafiles(folderPath, SqlOp.loadDatafileArr[i]);
+			loadDataSuccess = Functions.loadDatafiles(folderPath, SqlOp.loadDatafileArr[i]);
+			if(loadDataSuccess == true)
+				loadData += 1;
 		}
-
+		System.out.println("loadData: "+loadData);
+		if(loadData != 5)
+			return false;
+		else
+			return true;
 		/*
 		//For debugging
 		SqlOp.printAllSchema();
 		SqlOp.printAllTable();
 		 */
 
-		return true;
 	}
 
 	public static void createTables() {
@@ -81,7 +88,11 @@ public class Admin {
 
 		String folderPath = s.nextLine();
 
-		readData(folderPath);
+		System.out.print("Process...");
+		boolean readTrue = readData(folderPath);
+
+		if(readTrue == true)
+			System.out.println("Done! Data is inputted to the database");
 
 	}
 
