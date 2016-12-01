@@ -37,7 +37,10 @@ public class Manager {
         int lower = SalesSystem.sc.nextInt();
         System.out.print("Type in the upper bound for years of experience: ");
         int upper = SalesSystem.sc.nextInt();
-        SqlOp.countTransBasedOnYrs(lower,upper);
+        if(lower > upper)
+            System.out.println("Invalid input of bound for years since lower larger than upper");
+        else
+            SqlOp.countTransBasedOnYrs(lower,upper);
     }
 
     public static void showSalesValManufacturer(){

@@ -361,6 +361,58 @@ public class SqlOp {
 		}
 	}
 
+	public static boolean checkPartExist(int partID){
+		try {
+			stmt = conn.createStatement();
+			String sql =  "SELECT p.pid FROM part p where p.pid = ? ";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1,partID);
+			ResultSet rs = pstmt.executeQuery();
+
+			if(!rs.isBeforeFirst())
+			{
+				stmt.close();
+				return false;
+			}
+			else
+			{
+				stmt.close();
+				return true;
+			}
+
+		} catch (SQLException x) {
+			System.err.println("SQL exception: "+ x.getMessage());
+		}
+		return false;
+	}
+
+	public static boolean checkSIDExist(int salespersonID){
+	try {
+			stmt = conn.createStatement();
+			String sql =  "SELECT s.sid FROM salesperson s where s.sid = ? ";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1,salespersonID);
+			ResultSet rs = pstmt.executeQuery();
+
+			if(!rs.isBeforeFirst())
+			{
+				stmt.close();
+				return false;
+			}
+			else
+			{
+				stmt.close();
+				return true;
+			}
+
+		} catch (SQLException x) {
+			System.err.println("SQL exception: "+ x.getMessage());
+		}
+		return false;
+	}
+
+
+
 	public static boolean isPartAvailable(int id){
 		try {
 			Map<String, String> conditionMap= new HashMap<String, String>();

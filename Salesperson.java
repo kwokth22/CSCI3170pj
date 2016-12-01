@@ -114,75 +114,85 @@ public class Salesperson {
 
         //Add new transaction record
         //Is the transaction ID auto-increment? Sorted?
+        boolean checkpidexist = SqlOp.checkPartExist(partID);
+        // System.out.println("Check pid exist" + checkpidexist);
+        boolean checksidexist = SqlOp.checkSIDExist(salespersonId);
+        // System.out.println("Check sid exist" + checksidexist);
+        if(checkpidexist == false)
+            System.out.println("Part ID is not exist. Cannot sell part");
+        if(checksidexist == false)
+            System.out.println("Salesperon ID is not exist. Cannot sell part");
+        if(checkpidexist == true && checksidexist == true)
+         {
+           if(!SqlOp.isPartAvailable(partID)) {
 
+                System.out.println("The part remaining quantity is 0 and cannot be sold");
 
-        if(!SqlOp.isPartAvailable(partID)) {
+            } else{
 
-            System.out.println("The part remaining quantity is 0 and cannot be sold");
+                int currtID = -1;
 
-        } else{
+                try {
+                    //Get current largest tID
 
-            int currtID = -1;
+                    Map<String, String> tmpMap = new HashMap<String, String>();
+                    ResultSet r = SqlOp.selectAnd("max(tID)", "transaction", tmpMap, false, null, false);
 
-            try {
-                //Get current largest tID
+                    while (r.next()) {
+                        currtID = r.getInt(1);
+                    }
 
-                Map<String, String> tmpMap = new HashMap<String, String>();
-                ResultSet r = SqlOp.selectAnd("max(tID)", "transaction", tmpMap, false, null, false);
+                    ++currtID;
 
-                while (r.next()) {
-                    currtID = r.getInt(1);
+                } catch (SQLException x){
+                    System.out.println("SQL Exception (get curr tID): " + x.getMessage());
                 }
 
-                ++currtID;
 
-            } catch (SQLException x){
-                System.out.println("SQL Exception (get curr tID): " + x.getMessage());
-            }
+                String currDate = "";
+                try {
+                    SqlOp.stmt = SqlOp.conn.createStatement();
+                    ResultSet r = SqlOp.stmt.executeQuery("SELECT NOW()");
 
+                    while(r.next()){
+                        currDate = r.getDate(1).toString();
+                    }
 
-            String currDate = "";
-            try {
-                SqlOp.stmt = SqlOp.conn.createStatement();
-                ResultSet r = SqlOp.stmt.executeQuery("SELECT NOW()");
-
-                while(r.next()){
-                    currDate = r.getDate(1).toString();
+                } catch (SQLException x){
+                    System.out.println("SQL Exception (sellPart show product detail): " + x.getMessage());
                 }
 
-            } catch (SQLException x){
-                System.out.println("SQL Exception (sellPart show product detail): " + x.getMessage());
-            }
 
-
-            System.out.println("currtID: " + currtID);
-            System.out.println("currDate: " + currDate);
+                // System.out.println("currtID: " + currtID);
+                // System.out.println("currDate: " + currDate);
 
 
 
-            try {
-                SqlOp.stmt.executeUpdate("INSERT INTO transaction VALUES (" + currtID + ", " + partID + ", " + Integer.toString(salespersonId) + ", \'" + currDate + "\')");
-                //SqlOp.insert("transaction", new String[] {Integer.toString(currtID), Integer.toString(partID), Integer.toString(salespersonId), });
-            } catch (SQLException x) {
-                System.out.println("SQL Exception (insert into transaction): " + x.getMessage());
-            }
-
-            //Decrease part volume by one
-            Map<String,String> condition = new HashMap<String, String>();
-            condition.put("pID", Integer.toString(partID));
-            SqlOp.updateAnd("part", "pAvailableQuantity=pAvailableQuantity-1", condition);
-
-            //Show message
-            ResultSet rs = SqlOp.selectAnd("*", "part", condition, false, "", false);
-            try {
-                while (rs.next()) {
-                    System.out.println("Product: " + rs.getString("pName") + "(id: " + rs.getInt("pID") + ") Remaining Quantity: " + rs.getInt("pAvailableQuantity"));
+                try {
+                    SqlOp.stmt.executeUpdate("INSERT INTO transaction VALUES (" + currtID + ", " + partID + ", " + Integer.toString(salespersonId) + ", \'" + currDate + "\')");
+                    //SqlOp.insert("transaction", new String[] {Integer.toString(currtID), Integer.toString(partID), Integer.toString(salespersonId), });
+                } catch (SQLException x) {
+                    System.out.println("SQL Exception (insert into transaction): " + x.getMessage());
                 }
-            } catch (SQLException x) {
-                System.out.println("SQL Exception (sellPart show product detail): " + x.getMessage());
-            }
 
-        }
+                //Decrease part volume by one
+                Map<String,String> condition = new HashMap<String, String>();
+                condition.put("pID", Integer.toString(partID));
+                SqlOp.updateAnd("part", "pAvailableQuantity=pAvailableQuantity-1", condition);
+
+                //Show message
+                ResultSet rs = SqlOp.selectAnd("*", "part", condition, false, "", false);
+                try {
+                    while (rs.next()) {
+                        System.out.println("Product: " + rs.getString("pName") + "(id: " + rs.getInt("pID") + ") Remaining Quantity: " + rs.getInt("pAvailableQuantity"));
+                    }
+                } catch (SQLException x) {
+                    System.out.println("SQL Exception (sellPart show product detail): " + x.getMessage());
+                }
+
+            }
+         }   
+            
 
 
     }

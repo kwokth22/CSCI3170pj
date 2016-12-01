@@ -55,7 +55,7 @@ public class Admin {
 			if(loadDataSuccess == true)
 				loadData += 1;
 		}
-		System.out.println("loadData: "+loadData);
+		// System.out.println("loadData: "+loadData);
 		if(loadData != 5)
 			return false;
 		else
